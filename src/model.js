@@ -4,6 +4,9 @@ import * as THREE from 'three';
 
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler';
 
+import vertex from './shaders/vertexShader.glsl';
+import fragment from './shaders/fragmentShader.glsl';
+
 class Model {
   constructor(obj) {
     console.log(obj);
@@ -35,10 +38,23 @@ class Model {
       this.geometry = this.mesh.geometry;
 
       // create a particles Materials
-      this.particlesMaterial = new THREE.PointsMaterial({
-        color: 'red',
-        size: 0.02,
+      // this.particlesMaterial = new THREE.PointsMaterial({
+      //   color: 'red',
+      //   size: 0.02,
+      // });
+
+      this.particlesMaterial = new THREE.ShaderMaterial({
+        vertexShader: vertex,
+        fragmentShader: fragment,
+        uniforms: {
+          uColor1: { value: new THREE.Color('red') },
+          uColor2: { value: new THREE.Color('yellow') },
+          // uSize: { value: 0.02 },
+          // uColor: { value: new THREE.Color('red') },
+        },
       });
+
+      // this.mesh.material = this.particlesMaterial;
 
       // create particles geometry
       const sampler = new MeshSurfaceSampler(this.mesh).build();
