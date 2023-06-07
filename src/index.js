@@ -68,14 +68,14 @@ Controllers
 ------------------------------*/
 
 const buttons = document.querySelectorAll('.button');
-buttons[1].addEventListener('click', () => {
+buttons[0].addEventListener('click', () => {
   skull.add();
-  skull.remove();
+  horse.remove();
 });
 
-buttons[0].addEventListener('click', () => {
+buttons[1].addEventListener('click', () => {
+  horse.add();
   skull.remove();
-  skull.add();
 });
 
 /*------------------------------
