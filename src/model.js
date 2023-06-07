@@ -6,6 +6,7 @@ import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler';
 
 import vertex from './shaders/vertexShader.glsl';
 import fragment from './shaders/fragmentShader.glsl';
+import gsap from 'gsap';
 
 class Model {
   constructor(obj) {
@@ -20,6 +21,7 @@ class Model {
     this.dracoloader.setDecoderPath('./draco/');
 
     this.loader.setDRACOLoader(this.dracoloader);
+    this.isActive = false;
 
     this.init();
   }
@@ -44,14 +46,18 @@ class Model {
       // });
 
       this.particlesMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          uColor1: { value: new THREE.Color('blue') },
+          uColor2: { value: new THREE.Color('yellow') },
+          uTime: { value: 0 },
+          uScale: { value: 0 },
+        },
         vertexShader: vertex,
         fragmentShader: fragment,
-        uniforms: {
-          uColor1: { value: new THREE.Color('red') },
-          uColor2: { value: new THREE.Color('yellow') },
-          // uSize: { value: 0.02 },
-          // uColor: { value: new THREE.Color('red') },
-        },
+        transparent: true,
+        depthWrite: false,
+        depthTest: false,
+        blending: THREE.AdditiveBlending,
       });
 
       // this.mesh.material = this.particlesMaterial;
@@ -63,6 +69,8 @@ class Model {
       this.particlesGeometry = new THREE.BufferGeometry();
       const particlesPosition = new Float32Array(numParticles * 3);
 
+      const particlesRandomness = new Float32Array(numParticles * 3);
+
       for (let i = 0; i < numParticles; i++) {
         const newPosition = new THREE.Vector3();
         sampler.sample(newPosition);
@@ -70,11 +78,21 @@ class Model {
           [newPosition.x, newPosition.y, newPosition.z],
           i * 3
         );
+
+        particlesRandomness.set(
+          [Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1],
+          i * 3
+        );
       }
 
       this.particlesGeometry.setAttribute(
         'position',
         new THREE.BufferAttribute(particlesPosition, 3)
+      );
+
+      this.particlesGeometry.setAttribute(
+        'aRandom',
+        new THREE.BufferAttribute(particlesRandomness, 3)
       );
 
       // create the particle
@@ -91,10 +109,26 @@ class Model {
 
   add() {
     this.scene.add(this.particles);
+    this.isActive = true;
+
+    gsap.to(this.particlesMaterial.uniforms.uScale, {
+      duration: 0.8,
+      value: 1,
+      ease: 'power3.out',
+      delay: 0.3,
+    });
   }
 
   remove() {
-    this.scene.remove(this.particles);
+    gsap.to(this.particlesMaterial.uniforms.uScale, {
+      duration: 0.8,
+      value: 0,
+      ease: 'power3.out',
+      onComplete: () => {
+        this.scene.remove(this.particles);
+        this.isActive = false;
+      },
+    });
   }
 }
 
