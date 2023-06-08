@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Model from './model';
+import gasp from 'gsap';
 /*------------------------------
 Renderer
 ------------------------------*/
@@ -55,12 +56,14 @@ const skull = new Model({
   file: './models/skull.glb',
   scene: scene,
   placeOnLoad: true,
+  background: '#47001b',
 });
 
 const horse = new Model({
   name: 'horse',
   file: './models/horse.glb',
   scene: scene,
+  background: '#47001b',
 });
 
 /*------------------------------
@@ -110,3 +113,15 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener('resize', onWindowResize, false);
+
+function onMouseMove(e) {
+  const x = e.clientX;
+  const y = e.clientY;
+
+  gsap.to(scene.rotation, {
+    y: gsap.utils.mapRange(0, window.innerWidth, 0.2, -0.2, x),
+    x: gsap.utils.mapRange(0, window.innerHeight, 0.2, -0.2, y),
+  });
+}
+
+window.addEventListener('mousemove', onMouseMove);

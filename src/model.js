@@ -22,6 +22,7 @@ class Model {
 
     this.loader.setDRACOLoader(this.dracoloader);
     this.isActive = false;
+    this.background = obj.background;
 
     this.init();
   }
@@ -117,6 +118,27 @@ class Model {
       ease: 'power3.out',
       delay: 0.3,
     });
+
+    if (!this.isActive) {
+      gsap.fromTo(
+        this.particles.rotation,
+        {
+          y: Math.PI,
+        },
+        {
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        }
+      );
+
+      gsap.to('body', {
+        background: 'red',
+        duration: 0.8,
+      });
+    }
+
+    this.isActive = true;
   }
 
   remove() {
@@ -128,6 +150,12 @@ class Model {
         this.scene.remove(this.particles);
         this.isActive = false;
       },
+    });
+
+    gsap.to(this.particles.rotation, {
+      y: Math.PI,
+      duration: 0.8,
+      ease: 'power3.out',
     });
   }
 }
