@@ -43,7 +43,7 @@ class Model {
       // create a particles Materials
       // this.particlesMaterial = new THREE.PointsMaterial({
       //   color: 'red',
-      //   size: 0.02,
+      //   size: 0.02
       // });
 
       this.particlesMaterial = new THREE.ShaderMaterial({
